@@ -1,24 +1,22 @@
 pipeline {
     agent {
-      stages {
+        docker {
+            image 'node:6-alpine'
+            args '-p 3000:3000'
+        }
+    }
+    environment {
+        CI = 'true' 
+    }
+    stages {
         stage('Build') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                sh 'npm install'
             }
         }
-        stage('Test') {
+        stage('Test') { 
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
-        stage('Deliver') { 
-            steps {
-                sh './jenkins/scripts/deliver.sh' 
+                sh './jenkins/scripts/test.sh' 
             }
         }
     }
